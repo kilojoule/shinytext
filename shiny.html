@@ -1,0 +1,70 @@
+<html>
+<head><title>Shiny happy text holding hands</title></head>
+<body>
+<h1>Shiny text!</h1>
+<noscript>Please enable JS; if this page didn't use JS, it wouldn't be downloadable!<br/></noscript>
+<script>
+function do_it() {
+	var freq = parseFloat(document.getElementById('freq').value);
+	var amp = parseFloat(document.getElementById('amp').value);
+	var base = [parseInt(document.getElementById('base_r').value), 
+		parseInt(document.getElementById('base_g').value), 
+		parseInt(document.getElementById('base_b').value)]; 
+	var noiseamp = parseFloat(document.getElementById('noiseamp').value);
+	var text = document.getElementById('in').value;
+
+	s = "\"";
+	pr = "\"";
+	start = Math.random()*6;
+	for (var i = 0; i < text.length; i++) {
+		if (/\s/.exec(text[i]))  {
+			s += text[i];
+
+			if (text[i] == '\n') { 
+				pr += '<br/>';
+			} else {
+				pr += text[i];
+			}
+
+			continue;
+		}
+		console.log(noiseamp);
+		if (noiseamp > 0) {
+			addme = Math.random()*2*noiseamp - noiseamp;
+		} else {
+			addme = 0;
+		}
+		col = [
+			Math.round(Math.max(0, Math.min(255, Math.sin(freq*i + start) * amp + base[0] + addme))).toString(16), 
+			Math.round(Math.max(0, Math.min(255, Math.sin(freq*i + start) * amp + base[1] + addme))).toString(16), 
+			Math.round(Math.max(0, Math.min(255, Math.sin(freq*i + start) * amp + base[2] + addme))).toString(16)];
+		if (col[0].length < 2) { col[0] = "0" + col[0]; }
+        if (col[1].length < 2) { col[1] = "0" + col[1]; }
+        if (col[2].length < 2) { col[2] = "0" + col[2]; }
+		s = s + "[color=#" + col[0] + col[1] + col[2] + "]" + text[i] + "[/color]";
+		pr = pr + "<span style='color: #" + col[0] + col[1] + col[2] + "'>" + text[i] + "</span>";
+	}
+	s = s + "\"";
+	pr = pr + "\"";
+	document.getElementById('out').value = s;
+	document.getElementById('preview').innerHTML = pr;
+	document.getElementById('previewlight').innerHTML = pr;
+}
+</script>
+<textarea id='in' cols=80 rows=12></textarea><br/>
+
+Frequency: <input type='text' value='1' id='freq' size='5'/>
+Amplitude: <input id='amp' type='text' value='32' size='5'/>
+Noise amplitude: <input id='noiseamp' type='text' value='96' size='5'/><br/>
+Base (R, G, B): 
+	<input id='base_r' type='text' value='0' size='5'/>
+    <input id='base_g' type='text' value='184' size='5'/>
+    <input id='base_b' type='text' value='0' size='5'/>
+
+<input type='button' onclick='do_it()' value='Shinify!'/><br/>
+
+<textarea id='out' cols=80 rows=6 onclick='this.select()'></textarea>
+<h2>Preview</h2>
+<div id='preview' style='background: #404040; width: 40em; min-height: 4em; border: 1px solid black; word-wrap: break-word'></div>
+<div id='previewlight' style='background: #ecedf3; width: 40em; min-height: 4em; border: 1px solid black; word-wrap: break-word'></div>
+</body></html>
